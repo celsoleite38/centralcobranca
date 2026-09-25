@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Acesso restrito — Central de Cobranças</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #f4f5f7;
+        color: #1c1f26;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cartao {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 32px;
+        width: 100%;
+        max-width: 420px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { color: #6b7280; font-size: 14px; margin: 0 0 20px; }
+    a {
+        display: inline-block;
+        background: #2563eb;
+        color: #fff;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    a:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+<div class="cartao">
+    <h1>Acesso restrito</h1>
+    <p>Você logou, mas esta conta não pertence à equipe da Central de Cobranças.</p>
+    <form method="post" action="{% url 'logout' %}" style="display:inline-block; margin:0;">
+        {% csrf_token %}
+        <button type="submit" style="display:inline-block; background:#2563eb; color:#fff; border:0; border-radius:8px; padding:10px 18px; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer;">Sair</button>
+    </form>    
+</div>
+</body>
+</html>

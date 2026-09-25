@@ -1,0 +1,96 @@
+<form method="get" class="filtros">
+    {% if mostrar_filtro_sistema %}
+    <label>Sistema
+        <select name="sistema">
+            <option value="">Todos</option>
+            {% for s in sistemas %}
+            <option value="{{ s.codigo }}" {% if request.GET.sistema == s.codigo %}selected{% endif %}>{{ s.nome }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    {% endif %}
+    <label>Nome
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Buscar por nome...">
+    </label>
+    <label>Início de
+        <input type="date" name="inicio_de" value="{{ request.GET.inicio_de }}">
+    </label>
+    <label>Início até
+        <input type="date" name="inicio_ate" value="{{ request.GET.inicio_ate }}">
+    </label>
+    <label>Trial de
+        <input type="date" name="trial_de" value="{{ request.GET.trial_de }}">
+    </label>
+    <label>Trial até
+        <input type="date" name="trial_ate" value="{{ request.GET.trial_ate }}">
+    </label>
+    <label>Vencimento de
+        <input type="date" name="venc_de" value="{{ request.GET.venc_de }}">
+    </label>
+    <label>Vencimento até
+        <input type="date" name="venc_ate" value="{{ request.GET.venc_ate }}">
+    </label>
+    <label>Status
+        <select name="status">
+            <option value="">Todos</option>
+            {% for valor, rotulo in status_choices %}
+            <option value="{{ valor }}" {% if request.GET.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <div class="filtros-acoes">
+        <button type="submit">Filtrar</button>
+        {% if mostrar_filtro_sistema %}
+        <a href="{% url 'painel' %}">Limpar</a>
+        {% else %}
+        <a href="{% url 'painel_sistema' sistema.codigo %}">Limpar</a>
+        {% endif %}
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            {% if mostrar_filtro_sistema %}<th>Sistema</th>{% endif %}
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Plano</th>
+            <th>Status</th>
+            <th>Início</th>
+            <th>Trial fim</th>
+            <th>Próx. venc.</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in usuarios %}
+        <tr>
+            {% if mostrar_filtro_sistema %}
+            <td><a href="{% url 'painel_sistema' a.sistema.codigo %}">{{ a.sistema.codigo }}</a></td>
+            {% endif %}
+            <td>{{ a.nome|default:"-" }}</td>
+            <td>{{ a.email }}</td>
+            <td>{{ a.plano.nome|default:"-" }}</td>
+            <td><span class="status-badge status-{{ a.status }}">{{ a.status }}</span></td>
+            <td>{{ a.inicio_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ a.trial_fim|date:"d/m/Y"|default:"-" }}</td>
+            <td>{{ a.proximo_vencimento|date:"d/m/Y"|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" class="vazio">Nenhuma assinatura encontrada</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if usuarios.paginator.num_pages > 1 %}
+<div class="paginacao">
+    <span>Página {{ usuarios.number }} de {{ usuarios.paginator.num_pages }}</span>
+    <div>
+        {% if usuarios.has_previous %}
+        <a href="?page={{ usuarios.previous_page_number }}{% for key, val in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ val|urlencode }}{% endif %}{% endfor %}">« Anterior</a>
+        {% endif %}
+        {% if usuarios.has_next %}
+        <a href="?page={{ usuarios.next_page_number }}{% for key, val in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ val|urlencode }}{% endif %}{% endfor %}">Próxima »</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}

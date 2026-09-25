@@ -3,14 +3,13 @@ import requests, json
 url = "http://127.0.0.1:8000/api/criar-assinatura/"
 headers = {
     "Content-Type": "application/json",
-    "X-Central-Token": "innosoft_teste_123"
+    "X-Central-Token": "1OrMpZe_H7S0aydMvVhynpJvJP7ssYD2"
 }
-# Você disse que tem anual e semestral, então usa anual
 dados = {
-    "email": "teste@teste.com",
+    "email": "teste2@teste.com",
     "sistema": "catalogo",
-    "plano": "anual", # muda pra semestral se quiser testar
-    "nome": "Jose Teste"
+    "plano": "anual",
+    "nome": "Jose Teste 2"
 }
 
 r = requests.post(url, headers=headers, json=dados)

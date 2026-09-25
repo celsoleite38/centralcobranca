@@ -11,8 +11,9 @@ class SistemaAdmin(admin.ModelAdmin):
     list_display = ('codigo', 'nome', 'tipo', 'ativo', 'criado_em')
     list_filter = ('tipo', 'ativo')
     search_fields = ('codigo', 'nome')
+    fields = ('codigo', 'nome', 'tipo', 'token', 'notificar_url', 'ativo', 'criado_em')
+    readonly_fields = ('criado_em',)
     inlines = [PlanoInline]
-    prepopulated_fields = {} # se quiser
 
 @admin.register(Plano)
 class PlanoAdmin(admin.ModelAdmin):
@@ -35,5 +36,7 @@ class VendaAdmin(admin.ModelAdmin):
 
 @admin.register(WebhookLog)
 class WebhookLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'processado', 'criado_em')
+    list_display = ('id', 'sistema', 'tipo', 'processado', 'criado_em')
+    list_filter = ('sistema', 'tipo', 'processado')
+    search_fields = ('evento_id', 'tipo')
     readonly_fields = ('payload',)

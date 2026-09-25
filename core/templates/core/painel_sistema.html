@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>{{ sistema.nome }} - Central de Cobranças</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #f4f5f7;
+        color: #1c1f26;
+        margin: 0;
+        padding: 32px;
+    }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .subtitulo { color: #6b7280; margin-bottom: 28px; font-size: 14px; }
+    .voltar { font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 600; }
+    .voltar:hover { text-decoration: underline; }
+    .topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+    .topo a { color: #2563eb; text-decoration: none; font-weight: 600; margin-left: 14px; }
+    .topo a:hover { text-decoration: underline; }
+    .topo .usuario { font-weight: 700; color: #1c1f26; }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 18px 20px;
+    }
+    .card .valor { font-size: 26px; font-weight: 700; }
+    .card .label { font-size: 13px; color: #6b7280; margin-top: 4px; }
+    .status-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-trial { background: #fef3c7; color: #92400e; }
+    .status-ativa { background: #d1fae5; color: #065f46; }
+    .status-atrasada { background: #fee2e2; color: #991b1b; }
+    .status-cancelada, .status-inativa { background: #e5e7eb; color: #4b5563; }
+    section { margin-bottom: 32px; }
+    section h2 { font-size: 16px; margin-bottom: 12px; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    th, td {
+        text-align: left;
+        padding: 10px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid #f0f1f3;
+    }
+    th { background: #fafafa; color: #6b7280; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    .vazio { padding: 16px; color: #9ca3af; font-size: 13px; text-align: center; }
+    .filtros {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .filtros label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+    .filtros input, .filtros select {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 7px 9px;
+        font-size: 13px;
+        color: #1c1f26;
+        background: #fff;
+    }
+    .filtros-acoes {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .filtros button {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .filtros button:hover { background: #1d4ed8; }
+    .filtros-acoes a { font-size: 13px; color: #6b7280; text-decoration: none; }
+    .filtros-acoes a:hover { color: #2563eb; }
+    .paginacao {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+    .paginacao a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .paginacao a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="topo">
+    <span>Logado como <span class="usuario">{{ request.user.username }}</span></span>
+    <span>
+        {% if request.user.is_superuser %}
+        <a href="/admin/">Django Admin</a>
+        {% endif %}
+         <form method="post" action="{% url 'logout' %}" style="display:inline-block; margin:0;">
+            {% csrf_token %}
+            <button type="submit" style="background:none; border:0; padding:0; cursor:pointer; color:#2563eb; font-weight:600; font-size:13px; font-family:inherit;">Sair</button>
+        </form>
+    </span>
+</div>
+
+<p><a class="voltar" href="{% url 'painel' %}">← Voltar ao painel geral</a></p>
+<h1>{{ sistema.nome }} <small style="color:#6b7280; font-weight:400">({{ sistema.codigo }})</small></h1>
+<p class="subtitulo">
+    {{ sistema.get_tipo_display }} · {{ sistema.ativo|yesno:"Ativo,Inativo" }} · cadastrado em {{ sistema.criado_em|date:"d/m/Y H:i" }}
+</p>
+
+<div class="cards">
+    <div class="card">
+        <div class="valor">{{ planos|length }}</div>
+        <div class="label">Planos</div>
+    </div>
+    <div class="card">
+        <div class="valor">{{ total_assinaturas }}</div>
+        <div class="label">Usuários/assinantes</div>
+    </div>
+    <div class="card">
+        <div class="valor">{{ vendas.total|default:0 }}</div>
+        <div class="label">Vendas registradas</div>
+    </div>
+    <div class="card">
+        <div class="valor">R$ {{ vendas.soma_total|default:0 }}</div>
+        <div class="label">Volume em vendas</div>
+    </div>
+    <div class="card">
+        <div class="valor">R$ {{ vendas.soma_comissao|default:0 }}</div>
+        <div class="label">Comissão acumulada</div>
+    </div>
+</div>
+
+<section>
+    <h2>Planos</h2>
+    <table>
+        <thead>
+            <tr><th>Código</th><th>Nome</th><th>Valor</th><th>Ciclo</th><th>Trial (dias)</th><th>Ativo</th></tr>
+        </thead>
+        <tbody>
+            {% for p in planos %}
+            <tr>
+                <td>{{ p.codigo }}</td>
+                <td>{{ p.nome }}</td>
+                <td>R$ {{ p.valor }}</td>
+                <td>{{ p.get_ciclo_display }}</td>
+                <td>{{ p.dias_trial }}</td>
+                <td>{{ p.ativo|yesno:"Sim,Não" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="vazio">Nenhum plano cadastrado</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Assinaturas por status</h2>
+    <table>
+        <thead>
+            <tr><th>Status</th><th>Quantidade</th></tr>
+        </thead>
+        <tbody>
+            {% for item in assinaturas_por_status %}
+            <tr>
+                <td><span class="status-badge status-{{ item.status }}">{{ item.status }}</span></td>
+                <td>{{ item.total }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2" class="vazio">Nenhuma assinatura ainda</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Usuários do sistema</h2>
+    {% include "core/_lista_usuarios.html" %}
+</section>
+
+</body>
+</html>

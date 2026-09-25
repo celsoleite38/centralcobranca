@@ -1,2 +1,4 @@
 Django>=4.2
 requests
+python-decouple
+psycopg2-binary

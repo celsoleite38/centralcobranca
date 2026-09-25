@@ -5,5 +5,8 @@ urlpatterns = [
     path('criar-assinatura/', views.criar_assinatura),
     path('verificar-acesso/', views.verificar_acesso),
     path('registrar-venda/', views.registrar_venda),
+    path('planos/', views.planos_api),
+    path('checkout/', views.criar_checkout),
+    path('registrar-evento/', views.registrar_evento),
     path('webhook/asaas/', views.webhook_asaas),
 ]
